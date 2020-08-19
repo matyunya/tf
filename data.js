@@ -126,3 +126,10 @@ export class MnistData {
     return {xs, labels};
   }
 }
+
+export async function loadData() {
+  const data = new MnistData({ tf });
+  await data.load();
+  
+  return data;
+}

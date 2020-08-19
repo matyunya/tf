@@ -1,5 +1,101 @@
 version: 1.1
 nodes:
+  data = loadData()
+  examples = getExamples(data)
+  $1 = render(examples)
+  model = getModel()
+  logs = train(model, data)
+  accuracy = logs[0].map((l, i) => [i, l[1].acc])
+  val_accuracy = logs[1].map((l, i) => [i, l[1].val_acc])
+  loss = logs[0].map((l, i) => [i, l[1].loss])
+  val_loss = logs[1].map((l, i) => [i, l[1].val_loss])
+  $4 = plot({ data: accuracy, mapping: 'line' }) / label('batch', 'accuracy (blue)') + plot({ data: loss, mapping: 'line' }) / label(null, 'loss (red)') / color('red')
+  $6 = plot({ data: val_accuracy, mapping: 'line' }) / label('epoch', 'val accuracy (blue)') + plot({ data: val_loss, mapping: 'line' }) / label(null, 'val loss (red)') / color('red')
 layout:
 [
+  [
+    {
+      "value": "Data:"
+    },
+    {
+      "node": "data"
+    }
+  ],,
+  [,
+    {
+      "node": "examples"
+    }
+  ],
+  [
+    {
+      "value": "Sample images:"
+    },
+    {
+      "node": "$1"
+    }
+  ],,,
+  [
+    {
+      "value": "Model:"
+    },
+    {
+      "node": "model"
+    }
+  ],,
+  [
+    {
+      "value": "Training logs:"
+    },
+    {
+      "node": "logs"
+    }
+  ],,
+  [
+    {
+      "value": "Accuracy:"
+    },,
+    {
+      "node": "accuracy"
+    }
+  ],
+  [
+    {
+      "value": "Validation accuracy:"
+    },,
+    {
+      "node": "val_accuracy"
+    }
+  ],
+  [
+    {
+      "value": "Loss:"
+    },,
+    {
+      "node": "loss"
+    }
+  ],
+  [
+    {
+      "value": "Validation loss:"
+    },,
+    {
+      "node": "val_loss"
+    }
+  ],,
+  [
+    {
+      "value": "On batch end:"
+    },,,,,
+    {
+      "value": "On epoch end:"
+    }
+  ],
+  [
+    {
+      "node": "$4"
+    },,,,,
+    {
+      "node": "$6"
+    }
+  ]
 ]

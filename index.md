@@ -1,14 +1,12 @@
 # Tensorflow.js demo
 
+All the training is happening in the [sheet](https://ellx.io/matyunya/tf/index.ellx).
+
+## Test batch
+
 { image = canvas() }
 
-{ model = run() }
-
-{ resized = resize(image) }
-
-{ result = predict(tf, model, resized) }
-
-{ winner = result.reduce((a,b,i) => a[0] < b ? [b,i] : a, [Number.MIN_VALUE,-1])[1] }
+{ predict(tf, model, image) }
 
 
 
