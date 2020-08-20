@@ -1,20 +1,18 @@
 
 class Examples {
-  constructor({ data }) {
-    this.data = data;
-    this.canvases = [];
+  constructor(props) {
+    this.update(props);
   }
   
   update({ data }) {
-    return this.data;
-  }
-  
-  async* output() {
-    const canvases = [];
+    this.data = data;
+    
+    if (!this.data || !this.data.nextTestBatch) return;
+    
     const examples = this.data.nextTestBatch(50);
     const numExamples = examples.xs.shape[0];
 
-    this.canvases = await Promise.all(
+    Promise.all(
       Array.from(Array(50).keys())
         .map(async (_, i) => {
           const imageTensor = tf.tidy(() => {
@@ -34,9 +32,14 @@ class Examples {
 
           return canvas;
         })
-    );
-    
-    yield this.canvases;
+    ).then(canvases => this.emit && this.emit(canvases));
+  }
+  
+  async* output() {
+    while (true) {
+      this.value = await new Promise(resolve => this.emit = resolve);
+      yield this.value;
+    }
   }
 }
 
@@ -44,14 +47,17 @@ export const render = (nodes) => ({
   nodes,
   __EllxMeta__: {
     component: class {
-      constructor({ nodes }) {
-        this.nodes = Array.isArray(nodes) ? nodes : [nodes];
+      constructor(props) {
+        this.update(props);
       }
-      update({ nodes }) {
-        this.nodes = Array.isArray(nodes) ? nodes : [nodes];
+      update({ nodes = [] }) {
+        this.nodes = (Array.isArray(nodes) ? nodes : [nodes]).filter(n => Boolean(n) && n instanceof Node);
+      }
+      async *output() {
+        yield "...";
       }
       render(n) {
-        this.nodes.forEach(node => n.appendChild && n.appendChild(node));
+        this.nodes.forEach(node => n && n.appendChild && n.appendChild(node));
       }
       dispose() {
         this.nodes.forEach(node => node.parentNode && node.parentNode.removeChild(node));

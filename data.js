@@ -127,9 +127,25 @@ export class MnistData {
   }
 }
 
-export async function loadData() {
-  const data = new MnistData({ tf });
-  await data.load();
+let data;
+let loading = false;
+let loaded = false;
+
+export async function loadData(shouldRun) {
+  if (loaded) return data;
+
+  if (!shouldRun) {
+    if (loading) {
+      await loading;
+      loaded = true;
+    }
+    return data;
+  }
+  
+  data = new MnistData({ tf });
+  loading = data.load();
+  await loading;
+  loaded = true;
   
   return data;
 }

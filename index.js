@@ -2,9 +2,14 @@ export { loadData } from '/data.js';
 import 'https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js';
 export { predict, resize } from '/predict.js';
 export { default as canvas } from '~matyunya/draw-canvas/index.js';
-export { default as button } from '~ellx-hub/lib/components/Button/index.js';
+import Button from '/Button.svelte';
+import ellxify from '~ellx-hub/lib/utils/svelte.js';
 export { plot, label, color } from '~matyunya/plot/index.js';
 export { getExamples, render } from '/examples.js';
+import Results from "/Results.svelte";
+
+export const results = ellxify(Results);
+export const button = ellxify(Button);
 
 export const tf = window.tf;
 
@@ -68,31 +73,32 @@ export function getModel() {
   return model;
 }
 
-
-export const train = (model, data) => ({
-  model,
+export const train = (data, model, shouldRun) => ({
   data,
+  shouldRun,
+  model,
   __EllxMeta__: {
     component: class {
-      constructor({ model, data }) {
+      constructor({ data, model, shouldRun }) {
         this.batchLogs = [];
         this.epochLogs = [];
-        this.update({ model, data });
+        
+        if (!shouldRun) return;
+
+        this.update({ data, model });
       }
       
-      update({ model, data }) {
+      update({ data, model }) {
         tfTrain(
           model,
           data,
-          (...data) => {
-            this.batchLogs.push(data);
-            this.emit && this.emit([this.batchLogs, this.epochLogs])
-          },
-          (...data) => {
-            this.epochLogs.push(data);
-            this.emit && this.emit([this.batchLogs, this.epochLogs])
-          },
+          (_, { loss, acc }) => {
+            this.batchLogs.push([loss, acc]);
+            this.emit && this.emit([...this.batchLogs]);
+          }
         );
+        
+        return this.batchLogs;
       }
       
       async* output() {
@@ -105,9 +111,9 @@ export const train = (model, data) => ({
   }
 });
 
-async function tfTrain(model, data, onBatchEnd, onEpochEnd) {
+async function tfTrain(model, data, onBatchEnd, onEpochEnd = () => {}) {
   const BATCH_SIZE = 512;
-  const TRAIN_DATA_SIZE = 15000;
+  const TRAIN_DATA_SIZE = 5500;
   const TEST_DATA_SIZE = 500;
 
   const [trainXs, trainYs] = tf.tidy(() => {
@@ -129,7 +135,7 @@ async function tfTrain(model, data, onBatchEnd, onEpochEnd) {
   return model.fit(trainXs, trainYs, {
     batchSize: BATCH_SIZE,
     validationData: [testXs, testYs],
-    epochs: 3,
+    epochs: 10,
     shuffle: true,
     callbacks: {
       onBatchEnd,
