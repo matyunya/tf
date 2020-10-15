@@ -9,7 +9,7 @@ All data operations are defined in the [sheet](https://ellx.io/matyunya/tf/index
 First we need to load our test data. This takes a while since it has to download and analyze a ~10 mb image containing the dataset.
 
 {
-	shouldLoadData = button({ label: 'Load dataset' })
+  shouldLoadData = button({ label: 'Load dataset' })
 }
 
 ## Sample set
@@ -21,7 +21,7 @@ First we need to load our test data. This takes a while since it has to download
 Now you're ready to train your model! There's a hook attached that will emit model accuracy and loss upon finishing each training batch so you can easily see model performance over time.
 
 {
-	shouldTrainModel = button({
+  shouldTrainModel = button({
     label: 'Train model',
     disabled: !data,
   })

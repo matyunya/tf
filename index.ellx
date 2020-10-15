@@ -1,7 +1,7 @@
 version: 1.1
 nodes:
   examples = getExamples(data)
-  data = loadData(shouldLoadData)
+  data = loadData(shouldLoadData, tf)
   model = getModel()
   logs = train(data, model, shouldTrainModel)
   accuracy = logs.map((l, i) => [i, l[1]])
