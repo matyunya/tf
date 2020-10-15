@@ -4,7 +4,7 @@ class Examples {
     this.update(props);
   }
   
-  update({ data }) {
+  update({ data, tf }) {
     this.data = data;
     
     if (!this.data || !this.data.nextTestBatch) return;
@@ -66,8 +66,9 @@ export const render = (nodes) => ({
   }
 })
 
-export const getExamples = (data) => ({
+export const getExamples = (data, tf) => ({
   data,
+  tf, 
   __EllxMeta__: {
     component: Examples
   }

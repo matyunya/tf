@@ -1,9 +1,7 @@
 <script>
   import SingleResult from "./SingleResult.svelte";
 
-	export let value;
-	
-	$: console.log(value, 'VV');
+  export let value;
 </script>
 
 <div style="width: 100%; padding: 2rem; background-color: #eee; color: black;">

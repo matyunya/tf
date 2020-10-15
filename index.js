@@ -1,5 +1,5 @@
 export { loadData } from '/data.js';
-import 'https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js';
+import * as tf from "@tensorflow/tfjs";
 export { predict, resize } from '/predict.js';
 export { default as canvas } from '~matyunya/draw-canvas/index.js';
 import Button from '/Button.svelte';
@@ -11,7 +11,7 @@ import Results from "/Results.svelte";
 export const results = ellxify(Results);
 export const button = ellxify(Button);
 
-export const tf = window.tf;
+export { tf };
 
 export function getModel() {
   const model = tf.sequential();

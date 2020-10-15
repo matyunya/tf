@@ -131,7 +131,7 @@ let data;
 let loading = false;
 let loaded = false;
 
-export async function loadData(shouldRun) {
+export async function loadData(shouldRun, tf) {
   if (loaded) return data;
 
   if (!shouldRun) {
